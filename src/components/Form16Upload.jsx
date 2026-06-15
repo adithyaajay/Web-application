@@ -1,57 +1,41 @@
-import { useState } from "react";
-
 import axios from "axios";
 
 export default function Form16Upload({ setTaxData }) {
-  const [file, setFile] = useState(null);
-
-  const [loading, setLoading] = useState(false);
-
-  const uploadFile = async () => {
-    if (!file) {
-      alert("Select Form16 PDF");
-
-      return;
-    }
-
-    const formData = new FormData();
-
-    formData.append(
-      "file",
-
-      file,
-    );
-
+  const upload = async (e) => {
     try {
-      setLoading(true);
+      const file = e.target.files[0];
 
-      const response = await axios.post(
+      if (!file) return;
+
+      const fd = new FormData();
+
+      fd.append("file", file);
+
+      const res = await axios.post(
         "http://localhost:5000/api/itr/upload",
 
-        formData,
-
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
+        fd,
       );
 
-      console.log(response.data);
+      console.log(res.data);
 
-      setTaxData({
-        salary: response.data.data.salary || 0,
+      setTaxData(
+        res.data?.data || {
+          grossSalary: 0,
 
-        tds: response.data.data.tds || 0,
+          taxableIncome: 0,
 
-        employer: response.data.data.employer || "",
-      });
-    } catch (error) {
-      console.log(error);
+          tds: 0,
+
+          employer: "",
+
+          assessmentYear: "",
+        },
+      );
+    } catch (err) {
+      console.log(err);
 
       alert("Upload failed");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -59,15 +43,7 @@ export default function Form16Upload({ setTaxData }) {
     <div className="upload-box">
       <h2>Upload Form16</h2>
 
-      <input
-        type="file"
-        accept=".pdf"
-        onChange={(e) => setFile(e.target.files[0])}
-      />
-
-      <button onClick={uploadFile}>
-        {loading ? "Processing PDF..." : "Upload Form16"}
-      </button>
+      <input type="file" accept=".pdf" onChange={upload} />
     </div>
   );
 }

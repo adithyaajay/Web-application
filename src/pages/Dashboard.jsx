@@ -1,92 +1,51 @@
 import { useState } from "react";
-
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import Card from "../components/Card";
 import Form16Upload from "../components/Form16Upload";
 
-import { Bar } from "react-chartjs-2";
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
-
 export default function Dashboard() {
-  const [taxData, setTaxData] = useState({
-    salary: 0,
-
+  const [data, setData] = useState({
+    grossSalary: 0,
+    taxableIncome: 0,
     tds: 0,
-
     employer: "",
+    assessmentYear: "",
   });
 
-  const chartData = {
-    labels: ["Salary", "TDS"],
-
-    datasets: [
-      {
-        label: "Amount",
-
-        data: [taxData.salary, taxData.tds],
-      },
-    ],
-  };
-
   return (
-    <div className="layout">
-      <Sidebar />
+    <div className="main">
+      <h1>ITR Filing Assistant</h1>
 
-      <div className="main">
-        <Header />
+      <div className="cards">
+        <div className="tax-card">
+          <h4>Gross Salary</h4>
 
-        <div className="cards">
-          <Card
-            title="Total Income"
-            value={`₹ ${taxData.salary.toLocaleString()}`}
-          />
-
-          <Card title="TDS Paid" value={`₹ ${taxData.tds.toLocaleString()}`} />
-
-          <Card title="Employer" value={taxData.employer || "Upload Form16"} />
-
-          <Card title="Tax Status" value="Pending" />
+          <h2>₹ {(data?.grossSalary || 0).toLocaleString()}</h2>
         </div>
 
-        <div className="section">
-          <h2>Income Overview</h2>
+        <div className="tax-card">
+          <h4>Taxable Income</h4>
 
-          <Bar data={chartData} />
+          <h2>₹ {(data?.taxableIncome || 0).toLocaleString()}</h2>
         </div>
 
-        <div className="section">
-          <Form16Upload setTaxData={setTaxData} />
+        <div className="tax-card">
+          <h4>TDS Paid</h4>
+
+          <h2>₹ {(data?.tds || 0).toLocaleString()}</h2>
         </div>
 
-        <div className="section">
-          <h2>ITR Summary</h2>
+        <div className="tax-card">
+          <h4>Assessment Year</h4>
 
-          <div className="summary">
-            <p>
-              Salary Income :
-              <strong>₹ {taxData.salary.toLocaleString()}</strong>
-            </p>
-
-            <p>
-              TDS Deducted :<strong>₹ {taxData.tds.toLocaleString()}</strong>
-            </p>
-
-            <p>
-              Employer :<strong>{taxData.employer || "-"}</strong>
-            </p>
-          </div>
+          <h2>{data?.assessmentYear || "-"}</h2>
         </div>
+      </div>
+
+      <Form16Upload setTaxData={setData} />
+
+      <div className="section">
+        <h2>Employer</h2>
+
+        <p>{data?.employer || "Upload Form16"}</p>
       </div>
     </div>
   );
