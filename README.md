@@ -1,6 +1,6 @@
-# ITR Dashboard
+# ITR DashBoard
 
-## Setup
+## Setup-ITR dashboard
 
 Clone the repository:
 
